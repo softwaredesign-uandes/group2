@@ -80,6 +80,10 @@ namespace CraftMine
                     {
                         Console.Write(data[id][7]);
                     }
+                    else
+                    {
+                        Console.WriteLine("Incorrect Input");
+                    }
                     Console.Read();
                 }
             }
