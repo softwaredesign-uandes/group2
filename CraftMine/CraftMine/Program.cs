@@ -13,21 +13,29 @@ namespace CraftMine
             Console.WriteLine("Please type the name of the .block file to Read (for example: marvin.blocks)");
 
             string path = Console.ReadLine();
-            
+            Console.WriteLine(path);
+
             try
             {
                 string[] lines = File.ReadAllLines(path, Encoding.UTF8);
-
-                foreach (string line in lines)
+                String[][] data = new String[lines.Length][];
+                for (int i=0; i<lines.Length; i++)
                 {
-
-                    Console.WriteLine(line);
+                    data[i] = lines[i].Split();
+                    foreach (string pnt in data[i])
+                    {
+                        Console.Write(pnt + ' ');
+                    }
+                    Console.WriteLine();
                 }
+                Console.WriteLine(path + " file received.");
+                Console.WriteLine("Press Enter key to close...");
                 Console.Read();
             }
             catch (Exception e)
             {
-                Console.WriteLine("File not Found", e.ToString());
+                Console.WriteLine(e.ToString());
+                Console.Read();
             }
         }
     }
