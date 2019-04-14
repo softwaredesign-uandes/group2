@@ -11,9 +11,7 @@ namespace CraftMine
         {
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
             Console.WriteLine("Please type the name of the .block file to Read (for example: marvin.blocks)");
-
             string path = Console.ReadLine();
-            Console.WriteLine(path);
 
             try
             {
@@ -26,72 +24,58 @@ namespace CraftMine
                 }
                 Console.WriteLine(path + " file received.");
                 Console.WriteLine();
-                Console.WriteLine("Enter id to be checked.");
-                string idText = Console.ReadLine();
-                int id = 0;
-                if(Int32.TryParse(idText, out id)) {
-                    Console.WriteLine();
-                    Console.WriteLine("Press x for <x> coordinates.");
-                    Console.WriteLine("Press y for <y> coordinates.");
-                    Console.WriteLine("Press z for <z> coordinates.");
-                    if (path.Equals("zuck_small.block"))
-                    {
-                        Console.WriteLine("Press c for cost.");
-                        Console.WriteLine("Press v for value.");
-                        Console.WriteLine("Press r for rock_tonnes.");
-                        Console.WriteLine("Press o for ore_tonnes.");
-                    }
-                    else if (path.Equals("marvin.blocks"))
-                    {
-                        Console.WriteLine("Press t for tonn.");
-                        Console.WriteLine("Press a for au[ppm].");
-                        Console.WriteLine("Press u for cu %.");
-                        Console.WriteLine("Press p for proc_profit.");
-                    }
-                    string cord = Console.ReadLine();
+                Console.WriteLine("Enter the column details.");
+                string[] columnDetails = { "id", "x", "y", "z" };
+                string detailInput = Console.ReadLine();
+                string[] endDetails = detailInput.Split(' ');
 
-                    Console.WriteLine();
-                    Console.Write("Result: ");
-                    if (cord.Equals("x"))
-                    {
-                        Console.Write(data[id][1]);
-                    }
-                    else if (cord.Equals("y"))
-                    {
-                        Console.Write(data[id][2]);
-                    }
-                    else if (cord.Equals("z"))
-                    {
-                        Console.Write(data[id][3]);
-                    }
-                    else if (cord.Equals("c") || cord.Equals("t"))
-                    {
-                        Console.Write(data[id][4]);
-                    }
-                    else if (cord.Equals("v") || cord.Equals("a"))
-                    {
-                        Console.Write(data[id][5]);
-                    }
-                    else if (cord.Equals("r") || cord.Equals("u"))
-                    {
-                        Console.Write(data[id][6]);
-                    }
-                    else if (cord.Equals("o") || cord.Equals("p"))
-                    {
-                        Console.Write(data[id][7]);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Incorrect Input");
-                    }
-                    Console.Read();
+                while (columnDetails.Length + endDetails.Length != data[0].Length)
+                {
+                    Console.WriteLine("Details do not match data column amount.");
+                    Console.WriteLine("Enter the column details.");
+                    detailInput = Console.ReadLine();
+                    columnDetails = detailInput.Split(' ');
+
                 }
+
+                Array.Resize<string>(ref columnDetails, 4 + endDetails.Length);
+                Array.Copy(endDetails, 0, columnDetails, 4, endDetails.Length);
+                Console.WriteLine(columnDetails[]);
+
+                checkIdStat(columnDetails, data);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Console.Read();
             }
+        }
+
+        static void checkIdStat(string[] columns, string[][] data)
+        {
+            int id = 0;
+            int counter = 0;
+            Console.WriteLine();
+            Console.WriteLine("Enter id to be checked.");
+            string idText = Console.ReadLine();
+            Console.WriteLine();
+            if (Int32.TryParse(idText, out id))
+            {
+                foreach (string column in columns)
+                {
+                    Console.WriteLine("Press " + counter + " for " + column);
+                    counter++;
+                }
+            }
+            int columnNumber = 0;
+            string input = Console.ReadLine();
+            if (Int32.TryParse(input, out columnNumber))
+            {
+                Console.WriteLine();
+                Console.Write("Result: ");
+                Console.Write(columns[columnNumber] + " = " + data[id][columnNumber]);
+            }
+            Console.Read();
         }
     }
 }
