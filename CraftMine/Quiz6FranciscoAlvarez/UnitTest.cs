@@ -14,10 +14,10 @@ namespace Quiz6FranciscoAlvarez
             //arange
             string numbers = "1,2,3";
             int sum = 6;
-            Mathemagic maths = new Mathemagic();
+            Mathemagic magic = new Mathemagic();
 
             //act
-            int final = maths.Add(numbers);
+            int final = magic.Add(numbers);
 
             //assert
             Assert.AreEqual(sum, final);
