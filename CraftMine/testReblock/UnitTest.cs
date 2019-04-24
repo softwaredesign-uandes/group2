@@ -1,7 +1,6 @@
 ﻿
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileManager;
 
 namespace testReblock
 {
@@ -18,7 +17,7 @@ namespace testReblock
             int counterX = 0;
             int counterY = 0;
             int counterZ = 0;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 data[i][0] = counter.ToString();
                 counter++;
@@ -32,21 +31,21 @@ namespace testReblock
                 data[i][7] = "10";
                 data[i][8] = "10";
                 data[i][9] = "10";
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 5; j++)
                 {
                     data[j][0] = counter.ToString();
                     counter++;
                     data[j][1] = counterX.ToString();
                     data[j][2] = counterY.ToString();
+                    counterY++;
                     data[j][3] = counterZ.ToString();
-                    counterZ++;
                     data[j][4] = "10";
                     data[j][5] = "10";
                     data[j][6] = "10";
                     data[j][7] = "10";
                     data[j][8] = "10";
                     data[j][9] = "10";
-                    for (int k = 0; k < 2; k++)
+                    for (int k = 0; k < 5; k++)
                     {
                         data[k][0] = counter.ToString();
                         counter++;
@@ -64,13 +63,22 @@ namespace testReblock
                 }
                 
             }
-            
+            String[][] oldData = new String[1][];
+            oldData[0][1] = counterY.ToString();
+            oldData[0][2] = counterY.ToString();
+            oldData[0][3] = counterZ.ToString();
+            oldData[0][4] = "10";
+            oldData[0][5] = "10";
+            oldData[0][6] = "10";
+            oldData[0][7] = "10";
+            oldData[0][8] = "10";
+            oldData[0][9] = "10";
             int Rx = 5;
             int Ry = 5;
             int Rz = 5;
 
             //act
-            String[][] newData = fileManager.reblock(data, Rx, Ry, Rz);
+            string[][] newData = fileManager.reblock(data, Rx, Ry, Rz);
 
             //assert
             Assert.AreEqual(newData, oldData);

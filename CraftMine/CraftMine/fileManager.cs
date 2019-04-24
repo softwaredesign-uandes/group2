@@ -215,7 +215,12 @@ namespace CraftMine
             Console.ReadLine();
         }
 
-
+        public string[][] reblock(string[][] data, int Rx, int Ry, int Rz)
+        {
+            string[][] put = new string[1][];
+            put[0][0] = "0";
+            return data;
+        }
 
 
 
