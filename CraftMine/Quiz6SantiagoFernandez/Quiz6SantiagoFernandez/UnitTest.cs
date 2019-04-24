@@ -13,13 +13,13 @@ namespace Quiz6SantiagoFernandez
         {
             //arrange
             string listOfNumbers = "1,3,2,-1";
-            string delimeter = ",";
+            char delimeter = ',';
             int expectedAnswer = 6;
 
             TestSum testSum = new TestSum();
 
             //act
-            int answer = testSum.sum();
+            int answer = testSum.sum(listOfNumbers, delimeter);
 
             //assert
             Assert.AreEqual(expectedAnswer, answer);
