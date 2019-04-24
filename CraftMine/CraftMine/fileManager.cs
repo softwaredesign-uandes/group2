@@ -5,12 +5,10 @@ using System.Text;
 
 namespace CraftMine
 {
-    class fileManager
+    class FileManager
     {
 
-
-
-        static void mainMenu()
+        public void mainMenu()
         {
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
             Console.WriteLine("Please type the name of the .block file to Read (for example: marvin.blocks)");
@@ -216,5 +214,10 @@ namespace CraftMine
 
             Console.ReadLine();
         }
+
+
+
+
+
     }
 }

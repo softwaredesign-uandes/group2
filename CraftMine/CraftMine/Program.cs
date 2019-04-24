@@ -11,7 +11,7 @@ namespace CraftMine
         {
             FileManager fileManager = new FileManager();
 
-            fileManager.MainMenu();
+            fileManager.mainMenu();
         }
 
         
