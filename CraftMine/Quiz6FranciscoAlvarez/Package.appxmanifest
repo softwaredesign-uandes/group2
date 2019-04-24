@@ -5,11 +5,11 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
 
-  <Identity Name="4f12337f-0fbf-4162-8a35-40297338787e"
+  <Identity Name="ce2235ad-dd15-4e85-8d91-3c284d3d2d16"
             Publisher="CN=Francisco Alvarez"
             Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="4f12337f-0fbf-4162-8a35-40297338787e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="ce2235ad-dd15-4e85-8d91-3c284d3d2d16" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Quiz6FranciscoAlvarez</DisplayName>
