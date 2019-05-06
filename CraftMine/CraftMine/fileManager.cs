@@ -7,46 +7,35 @@ namespace CraftMine
 {
     class FileManager
     {
+        ReBlock reblock;
+        BlockModel blockModel;
+        bool zuck = true;
 
         public void mainMenu()
         {
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
-            Console.WriteLine("Please type the name of the .block file to Read (for example: marvin.blocks)");
+            Console.WriteLine("Please type the name of the .block file to Read (for example: marvin)");
             string path = Console.ReadLine();
+            reblock = new ReBlock();
 
             try
             {
-                string[] lines = File.ReadAllLines(path, Encoding.UTF8);
-                String[][] data = new String[lines.Length][];
-                Console.WriteLine("Loading file, this may take a moment.");
-                for (int i = 0; i < lines.Length; i++)
+                if (path == "zuck")
                 {
-                    data[i] = lines[i].Split();
-                }
-                Console.WriteLine(path + " file received.");
-                Console.WriteLine();
-                Console.WriteLine("Enter the column details.");
-                string[] columnDetails = { "id", "x", "y", "z" };
-                string detailInput = Console.ReadLine();
-                string[] endDetails = detailInput.Split(' ');
-
-                while (columnDetails.Length + endDetails.Length != data[0].Length)
-                {
-                    Console.WriteLine("Details do not match data column amount.");
-                    Console.WriteLine("Enter the column details.");
-                    detailInput = Console.ReadLine();
-                    columnDetails = detailInput.Split(' ');
+                   createZuckBlockModel(path);
 
                 }
+                else
+                {
+                    createMarvinBlockModel(path);
+                    zuck = false;
+                }
 
-                Array.Resize<string>(ref columnDetails, 4 + endDetails.Length);
-                Array.Copy(endDetails, 0, columnDetails, 4, endDetails.Length);
-                Console.WriteLine(columnDetails);
 
                 while (true)
                 {
                     Console.WriteLine("Please select your next command:");
-                    Console.WriteLine("Press 1 to check stats with the ID \nPress 2 to check General Statistics \nPress 3 to Exit");
+                    Console.WriteLine("Press 1 to check stats with the ID \nPress 2 to check General Statistics \nPress 3 to Reblock \nPress 4 to Exit");
                     string selection = Console.ReadLine();
                     int intSelection;
                     try
@@ -54,19 +43,28 @@ namespace CraftMine
                         Int32.TryParse(selection, out intSelection);
                         if (intSelection == 1)
                         {
-                            checkIdStat(columnDetails, data);
+                            blockModel.checkIdStat(zuck);
                         }
                         else if (intSelection == 2)
                         {
-                            checkGeneralStatistics(columnDetails, data);
+                            blockModel.checkGeneralStatistics(zuck);
                         }
                         else if (intSelection == 3)
                         {
-                            break;
+                            Console.WriteLine("Please Select X");
+                            int Rx;
+                            Int32.TryParse(Console.ReadLine(), out Rx);
+                            Console.WriteLine("Please Select Y");
+                            int Ry;
+                            Int32.TryParse(Console.ReadLine(), out Ry);
+                            Console.WriteLine("Please Select Z");
+                            int Rz;
+                            Int32.TryParse(Console.ReadLine(), out Rz);
+                            blockModel.setBlocksList(Reblock(blockModel.blocks, Rx, Ry, Rz));
                         }
                         else
                         {
-                            Console.WriteLine("Wrong Input");
+                            break;
                         }
 
                     }
@@ -83,144 +81,133 @@ namespace CraftMine
             }
         }
 
-        static void checkIdStat(string[] columns, string[][] data)
+
+        public void createZuckBlockModel(string path)
         {
-            int id = 0;
-            int counter = 0;
-            Console.WriteLine();
-            Console.WriteLine("Enter id to be checked.");
-            string idText = Console.ReadLine();
-            Console.WriteLine();
-            if (Int32.TryParse(idText, out id))
+            List<Block> blocksFromFile = new List<Block>();
+            Console.WriteLine("Loading file, this may take a moment.");
+            int id;
+            int x;
+            int y;
+            int z;
+            double weight;
+            foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
-                foreach (string column in columns)
-                {
-                    Console.WriteLine("Press " + counter + " for " + column);
-                    counter++;
-                }
+                Dictionary<string, double> grades = new Dictionary<string, double>();
+                Dictionary<string, double> stats = new Dictionary<string, double>();
+                string[] value = line.Split(' ');
+                id = Convert.ToInt32(value[0]);
+                x = Convert.ToInt32(value[1]);
+                y = Convert.ToInt32(value[2]);
+                z = Convert.ToInt32(value[3]);
+                stats["cost"] = Convert.ToDouble(value[4]);
+                stats["value"] = Convert.ToDouble(value[5]);
+                stats["rock_tonnes"] = Convert.ToDouble(value[6]);
+                stats["ore_tonnes"] = Convert.ToDouble(value[7]);
+                weight = stats["rock_tonnes"] + stats["ore_tonnes"];
+                grades["ore_grade"] = stats["ore_tonnes"] / weight;
+                blocksFromFile.Add(new Block(id, x, y, z, weight, grades, stats));
             }
-            int columnNumber = 0;
-            string input = Console.ReadLine();
-            if (Int32.TryParse(input, out columnNumber))
-            {
-                Console.WriteLine();
-                Console.Write("Result: ");
-                Console.Write(columns[columnNumber] + " = " + data[id][columnNumber]);
-            }
-            Console.ReadLine();
+            blockModel = new BlockModel(blocksFromFile);
         }
 
-        static void checkGeneralStatistics(string[] columns, string[][] data)
+        public void createMarvinBlockModel(string path)
         {
-            int selection = 0;
-            int counter = 0;
-            Console.WriteLine();
-            Console.WriteLine("Please Select your next Command \nPress 1 for total Number of Blocks");
-            Console.WriteLine("Press 2 for Total weight of the Mineral Deposit \nPress 3 for total weight of ALL mineral Deposit");
-            Console.WriteLine("Press 4 for Air Percentage");
-            string idText = Console.ReadLine();
-            Console.WriteLine();
-            if (Int32.TryParse(idText, out selection))
+            List<Block> blocksFromFile = new List<Block>();
+            Console.WriteLine("Loading file, this may take a moment.");
+            int id;
+            int x;
+            int y;
+            int z;
+            double weight;
+            foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
-                if (selection == 1)
-                {
-                    Console.WriteLine("There are " + data.Length + " number of blocks");
-                }
-                else if (selection == 2)
-                {
-                    double totalWeight = 0;
-                    Console.WriteLine("Select which of this values is the Mineral Deposit you wish to count.");
-                    foreach (string column in columns)
-                    {
-                        Console.WriteLine("Press " + counter + " for " + column);
-                        counter++;
-                    }
-                    int columnNumber = 0;
-                    string input = Console.ReadLine();
-                    if (Int32.TryParse(input, out columnNumber))
-                    {
-                        Console.WriteLine();
-                        for (int id = 0; id < data.Length; id++)
-                        {
-                            totalWeight += Convert.ToDouble(data[id][columnNumber]);
-                        }
-                    }
-                    Console.Write("Total Weight: " + totalWeight);
-                }
-                else if (selection == 3)
-                {
-                    double totalWeight = 0;
-                    while (true)
-                    {
-                        counter = 0;
-                        Console.WriteLine("Select which of this values are the Mineral Deposit you wish to count.");
-                        foreach (string column in columns)
-                        {
-                            Console.WriteLine("Press " + counter + " for " + column);
-                            counter++;
-                        }
-                        Console.WriteLine("Press " + counter + "to get the value");
-                        int columnNumber = 0;
-                        string input = Console.ReadLine();
-                        if (Int32.TryParse(input, out columnNumber))
-                        {
-                            if (columnNumber == counter)
-                            {
-                                break;
-                            }
-                            Console.WriteLine();
-                            for (int id = 0; id < data.Length; id++)
-                            {
-                                totalWeight += Convert.ToDouble(data[id][columnNumber]);
-                            }
-                            Console.WriteLine("If there are more Mineral Deposits add them.");
-                        }
-                    }
-                    Console.Write("Total Weight: " + totalWeight);
-                }
-                else if (selection == 4)
-                {
-                    double airPercentage = 0;
-                    double value = 0;
-                    Console.WriteLine("Select which of this values has the Air statistics");
-                    foreach (string column in columns)
-                    {
-                        Console.WriteLine("Press " + counter + " for " + column);
-                        counter++;
-                    }
-                    int columnNumber = 0;
-                    string input = Console.ReadLine();
-                    if (Int32.TryParse(input, out columnNumber))
-                    {
-                        Console.WriteLine();
-                        for (int id = 0; id < data.Length; id++)
-                        {
-
-                            value = Convert.ToDouble(data[id][columnNumber]);
-                            if (value == 0)
-                            {
-                                airPercentage++;
-                            }
-                        }
-                    }
-                    airPercentage = airPercentage / data.Length;
-                    Console.Write("Air Percentage: " + airPercentage + " %");
-                }
-                else
-                {
-                    Console.WriteLine("Wrong Input");
-                }
+                Dictionary<string, double> grades = new Dictionary<string, double>();
+                Dictionary<string, double> stats = new Dictionary<string, double>();
+                string[] value = line.Split(' ');
+                id = Convert.ToInt32(value[0]);
+                x = Convert.ToInt32(value[1]);
+                y = Convert.ToInt32(value[2]);
+                z = Convert.ToInt32(value[3]);
+                weight = Convert.ToDouble(value[4]);
+                grades["au [ppm]"] = Convert.ToDouble(value[5]);
+                grades["cu %"] = Convert.ToDouble(value[6]);
+                stats["proc_profit"] = Convert.ToDouble(value[7]);
+                blocksFromFile.Add(new Block(id, x, y, z, weight, grades, stats));
             }
-
-            Console.ReadLine();
+            blockModel = new BlockModel(blocksFromFile);
         }
 
-        public string[][] reblock(string[][] data, int Rx, int Ry, int Rz)
+        public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
         {
-            string[][] put = new string[1][];
-            put[0][0] = "0";
-            return data;
+            List<Block> reBlockModel = new List<Block>();
+            Dictionary<string, double> newGrades = new Dictionary<string, double>();
+            Dictionary<string, double> newStats = new Dictionary<string, double>();
+            int id = 1;
+            double newWeight = 0;
+            if (zuck)
+            {
+                double totalCost = 0;
+                double totalValue = 0;
+                double totalRock = 0;
+                double totalOre = 0;
+                foreach (Block block in blocks)
+                {
+                    if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
+                    {
+                        newWeight += block.weight;
+                        totalCost += block.stats["cost"];
+                        totalValue += block.stats["value"];
+                        totalRock += block.stats["rock_tonnes"];
+                        totalOre += block.stats["ore_tonnes"];
+                    }
+                    else
+                    {
+                        reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.weight, block.grades, block.stats));
+                        id++;
+                    }
+                }
+                newGrades["ore_grade"] = totalOre / newWeight;
+                newStats["cost"] = totalCost;
+                newStats["value"] = totalValue;
+                newStats["rock_tonnes"] = totalRock;
+                newStats["ore_tonnes"] = totalOre;
+            }
+            else
+            {
+                double totalAu = 0;
+                double totalCu = 0;
+                double totalProfit = 0;
+                foreach (Block block in blocks)
+                {
+                    if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
+                    {
+                        newWeight += block.weight;
+                        totalAu += block.stats["au [ppm]"];
+                        totalCu += block.stats["cu %"];
+                        totalProfit += block.stats["proc_profit"];
+                    }
+                    else
+                    {
+                        reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.weight, block.grades, block.stats));
+                        id++;
+                    }
+                }
+                newGrades["au [ppm]"] = totalAu;
+                newGrades["cu %"] = totalCu;
+                newStats["proc_profit"] = totalProfit;
+            }
+            
+
+            reBlockModel.Add(new Block(0, Rx, Ry, Rz, newWeight, newGrades, newStats));
+
+            return reBlockModel;
         }
+
+
+
+
+
 
 
 
