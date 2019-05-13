@@ -10,7 +10,7 @@ namespace CraftMine
         List<BlockModel> olderBlockModels = new List<BlockModel>();
         BlockModel blockModel;
         bool zuck = true;
-
+            
         public void mainMenu()
         {
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
@@ -31,47 +31,7 @@ namespace CraftMine
                 }
 
 
-                while (true)
-                {
-                    Console.WriteLine("Please select your next command:");
-                    Console.WriteLine("Press 1 to check stats with the ID \nPress 2 to check General Statistics \nPress 3 to Reblock \nPress 4 to Exit");
-                    string selection = Console.ReadLine();
-                    int intSelection;
-                    try
-                    {
-                        Int32.TryParse(selection, out intSelection);
-                        if (intSelection == 1)
-                        {
-                            blockModel.checkIdStat(zuck);
-                        }
-                        else if (intSelection == 2)
-                        {
-                            blockModel.checkGeneralStatistics(zuck);
-                        }
-                        else if (intSelection == 3)
-                        {
-                            Console.WriteLine("Please Select X");
-                            int Rx;
-                            Int32.TryParse(Console.ReadLine(), out Rx);
-                            Console.WriteLine("Please Select Y");
-                            int Ry;
-                            Int32.TryParse(Console.ReadLine(), out Ry);
-                            Console.WriteLine("Please Select Z");
-                            int Rz;
-                            Int32.TryParse(Console.ReadLine(), out Rz);
-                            blockModel.setBlocksList(Reblock(blockModel.blocks, Rx, Ry, Rz));
-                        }
-                        else
-                        {
-                            break;
-                        }
-
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
-                }
+                showCommandMenu();
             }
             catch (Exception e)
             {
@@ -204,7 +164,50 @@ namespace CraftMine
             return reBlockModel;
         }
 
+        public void showCommandMenu()
+        {
+            while (true)
+            {
+                Console.WriteLine("Please select your next command:");
+                Console.WriteLine("Press 1 to check stats with the ID \nPress 2 to check General Statistics \nPress 3 to Reblock \nPress 4 to Exit");
+                string selection = Console.ReadLine();
+                int intSelection;
+                try
+                {
+                    Int32.TryParse(selection, out intSelection);
+                    if (intSelection == 1)
+                    {
+                        blockModel.checkIdStat(zuck);
+                    }
+                    else if (intSelection == 2)
+                    {
+                        blockModel.checkGeneralStatistics(zuck);
+                    }
+                    else if (intSelection == 3)
+                    {
+                        Console.WriteLine("Please Select X");
+                        int Rx;
+                        Int32.TryParse(Console.ReadLine(), out Rx);
+                        Console.WriteLine("Please Select Y");
+                        int Ry;
+                        Int32.TryParse(Console.ReadLine(), out Ry);
+                        Console.WriteLine("Please Select Z");
+                        int Rz;
+                        Int32.TryParse(Console.ReadLine(), out Rz);
+                        blockModel.setBlocksList(Reblock(blockModel.blocks, Rx, Ry, Rz));
+                    }
+                    else
+                    {
+                        break;
+                    }
 
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
 
 
 

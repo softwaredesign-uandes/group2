@@ -114,7 +114,7 @@ namespace CraftMine
                     double totalWeight = 0;
                     if (zuck)
                     {
-                        Console.WriteLine("Press 1 for Ore Weight \nPress 2 Rock");
+                        Console.WriteLine("Press 1 for Ore Weight \nPress 2 for Rock Weight");
                         if (Int32.TryParse(idText, out selection))
                         {
                             if (selection == 1)
