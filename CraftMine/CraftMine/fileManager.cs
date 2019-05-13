@@ -7,7 +7,7 @@ namespace CraftMine
 {
     class FileManager
     {
-        ReBlock reblock;
+        List<BlockModel> olderBlockModels = new List<BlockModel>();
         BlockModel blockModel;
         bool zuck = true;
 
@@ -16,7 +16,6 @@ namespace CraftMine
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
             Console.WriteLine("Please type the name of the .block file to Read (for example: marvin)");
             string path = Console.ReadLine();
-            reblock = new ReBlock();
 
             try
             {
@@ -140,6 +139,7 @@ namespace CraftMine
 
         public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
         {
+            olderBlockModels.Add(new BlockModel(blocks));
             List<Block> reBlockModel = new List<Block>();
             Dictionary<string, double> newGrades = new Dictionary<string, double>();
             Dictionary<string, double> newStats = new Dictionary<string, double>();
