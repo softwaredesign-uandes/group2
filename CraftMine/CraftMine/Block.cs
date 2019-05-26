@@ -13,7 +13,7 @@ namespace CraftMine
         public Dictionary<string, double> stats;
 
 
-        public Block(int id, int x, int y, int z, Dictionary<string, double> stats)
+		public Block(int id, int x, int y, int z, Dictionary<string, double> stats)
         {
             this.id = id; this.x = x; this.y = y; this.z = z;
             this.stats = stats;

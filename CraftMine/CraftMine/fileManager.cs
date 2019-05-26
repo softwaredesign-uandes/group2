@@ -18,7 +18,7 @@ namespace CraftMine
 
             try
             {
-                createBlockModel(path);
+                CreateBlockModel(path);
                 showCommandMenu();
             }
             catch (Exception e)
@@ -29,7 +29,7 @@ namespace CraftMine
         }
 
 
-        public void createBlockModel(string path)
+        public void CreateBlockModel(string path)
         {
             List<Block> blocksFromFile = new List<Block>();
             Console.WriteLine("Loading file, this may take a moment.");
@@ -50,7 +50,7 @@ namespace CraftMine
 					firstLine = false;
 					for(int i = 4; i<columnNumber; i++)
 					{
-						Console.WriteLine("Please give a name to column number " + i.ToString);
+						Console.WriteLine("Please give a name to column number " + i.ToString());
 						string name = Console.ReadLine();
 						names[i] = name;
 					}
@@ -70,7 +70,7 @@ namespace CraftMine
 
         public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
         {
-            olderBlockModels.Add(new BlockModel(blocks));
+            olderBlockModels.Add(new BlockModel(blocks, blockModel.names));
             List<Block> reBlockModel = new List<Block>();
             Dictionary<string, double> newGrades = new Dictionary<string, double>();
             Dictionary<string, double> newStats = new Dictionary<string, double>();
