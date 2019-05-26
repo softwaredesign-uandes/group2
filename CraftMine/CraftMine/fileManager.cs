@@ -9,7 +9,6 @@ namespace CraftMine
     {
         List<BlockModel> olderBlockModels = new List<BlockModel>();
         BlockModel blockModel;
-        bool zuck = true;
             
         public void mainMenu()
         {
@@ -19,18 +18,7 @@ namespace CraftMine
 
             try
             {
-                if (path == "zuck")
-                {
-                   createZuckBlockModel(path);
-
-                }
-                else
-                {
-                    createMarvinBlockModel(path);
-                    zuck = false;
-                }
-
-
+                createBlockModel(path);
                 showCommandMenu();
             }
             catch (Exception e)
@@ -41,7 +29,7 @@ namespace CraftMine
         }
 
 
-        public void createZuckBlockModel(string path)
+        public void createBlockModel(string path)
         {
             List<Block> blocksFromFile = new List<Block>();
             Console.WriteLine("Loading file, this may take a moment.");
@@ -49,52 +37,35 @@ namespace CraftMine
             int x;
             int y;
             int z;
-            double weight;
-            foreach (string line in File.ReadLines(path, Encoding.UTF8))
+			int columnNumber = 0;
+			bool firstLine = true;
+			Dictionary<int, string> names = new Dictionary<int, string>();
+			foreach (string line in File.ReadLines(path, Encoding.UTF8))
             {
-                Dictionary<string, double> grades = new Dictionary<string, double>();
                 Dictionary<string, double> stats = new Dictionary<string, double>();
                 string[] value = line.Split(' ');
+				if (firstLine)
+				{
+					columnNumber = value.Length;
+					firstLine = false;
+					for(int i = 4; i<columnNumber; i++)
+					{
+						Console.WriteLine("Please give a name to column number " + i.ToString);
+						string name = Console.ReadLine();
+						names[i] = name;
+					}
+				}
                 id = Convert.ToInt32(value[0]);
                 x = Convert.ToInt32(value[1]);
                 y = Convert.ToInt32(value[2]);
                 z = Convert.ToInt32(value[3]);
-                stats["cost"] = Convert.ToDouble(value[4]);
-                stats["value"] = Convert.ToDouble(value[5]);
-                stats["rock_tonnes"] = Convert.ToDouble(value[6]);
-                stats["ore_tonnes"] = Convert.ToDouble(value[7]);
-                weight = stats["rock_tonnes"] + stats["ore_tonnes"];
-                grades["ore_grade"] = stats["ore_tonnes"] / weight;
-                blocksFromFile.Add(new Block(id, x, y, z, weight, grades, stats));
+				for (int i = 4; i<columnNumber; i++)
+				{
+					stats[names[i]] = Convert.ToDouble(value[i]);
+				}
+                blocksFromFile.Add(new Block(id, x, y, z, stats));
             }
-            blockModel = new BlockModel(blocksFromFile);
-        }
-
-        public void createMarvinBlockModel(string path)
-        {
-            List<Block> blocksFromFile = new List<Block>();
-            Console.WriteLine("Loading file, this may take a moment.");
-            int id;
-            int x;
-            int y;
-            int z;
-            double weight;
-            foreach (string line in File.ReadLines(path, Encoding.UTF8))
-            {
-                Dictionary<string, double> grades = new Dictionary<string, double>();
-                Dictionary<string, double> stats = new Dictionary<string, double>();
-                string[] value = line.Split(' ');
-                id = Convert.ToInt32(value[0]);
-                x = Convert.ToInt32(value[1]);
-                y = Convert.ToInt32(value[2]);
-                z = Convert.ToInt32(value[3]);
-                weight = Convert.ToDouble(value[4]);
-                grades["au [ppm]"] = Convert.ToDouble(value[5]);
-                grades["cu %"] = Convert.ToDouble(value[6]);
-                stats["proc_profit"] = Convert.ToDouble(value[7]);
-                blocksFromFile.Add(new Block(id, x, y, z, weight, grades, stats));
-            }
-            blockModel = new BlockModel(blocksFromFile);
+            blockModel = new BlockModel(blocksFromFile, names);
         }
 
         public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
