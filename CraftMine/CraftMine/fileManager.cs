@@ -77,19 +77,24 @@ namespace CraftMine
 			int z;
 			int columnNumber = headers.Length;
 			Dictionary<int, string> names = new Dictionary<int, string>();
+			int key = 0;
 			foreach (string name in headers){
-
+				if (key > 3)
+				{
+					names[key] = headers[key];
+				}
+				key++;
 			}
 			foreach (double[] value in values)
 			{
 				Dictionary<string, double> stats = new Dictionary<string, double>();
-				id = Convert.ToInt32(value);
-				x = Convert.ToInt32(value);
-				y = Convert.ToInt32(value);
-				z = Convert.ToInt32(value);
+				id = Convert.ToInt32(value[0]);
+				x = Convert.ToInt32(value[1]);
+				y = Convert.ToInt32(value[2]);
+				z = Convert.ToInt32(value[3]);
 				for (int i = 4; i < columnNumber; i++)
 				{
-					stats[names[i]] = Convert.ToDouble(value);
+					stats[names[i]] = Convert.ToDouble(value[i]);
 				}
 				blocksFromFile.Add(new Block(id, x, y, z, stats));
 			}

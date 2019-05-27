@@ -23,7 +23,7 @@ namespace CraftMine
 			{
 				context.Response.ContentType = ContentType.JSON;
 				dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
-				names = payload.names;
+				names = payload.names.ToObject<String[]>();
 				context.Response.SendResponse("OK");
 
 			}
@@ -51,7 +51,7 @@ namespace CraftMine
 				if (payload.last == "true")
 				{
 					FileManager fileManager = new FileManager();
-					fileManager.MainMenu();
+					fileManager.CreateBlockModelFromSheet(names, values);
 				}
 			}
 			catch (Exception e)
