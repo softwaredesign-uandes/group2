@@ -96,7 +96,6 @@ namespace CraftMine
 					Console.WriteLine(e.ToString());
 					Console.Read();
 				}
-
 			}
 			int numberOfBlocks = 0;
 			foreach (Block block in blocks)
@@ -135,7 +134,76 @@ namespace CraftMine
             return reBlockModel;
         }
 
-        public void showCommandMenu()
+		public List<Block> VirtualReblock(List<Block> blocks, int Rx, int Ry, int Rz)
+		{
+			List<Block> oldBlocks = new List<Block>();
+			List<Block> reBlockModel = new List<Block>();
+			Dictionary<int, int> operations = new Dictionary<int, int>();
+			Dictionary<string, double> newStats = new Dictionary<string, double>();
+			int id = 1;
+			int intSelection = 0;
+			foreach (KeyValuePair<int, string> name in blockModel.names)
+			{
+				Console.WriteLine("Seleccione 1 si esta columna se suma o 2 si esta columna se promedia " + name.Value);
+				newStats[name.Value] = 0;
+				string selection = Console.ReadLine();
+				try
+				{
+					Int32.TryParse(selection, out intSelection);
+					if (intSelection == 1)
+					{
+						operations[name.Key] = 1;
+					}
+					else if (intSelection == 2)
+					{
+						operations[name.Key] = 2;
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+					Console.Read();
+				}
+			}
+			int numberOfBlocks = 0;
+			foreach (Block block in blocks)
+			{
+				if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
+				{
+					oldBlocks.Add(block);
+					foreach (KeyValuePair<int, string> name in blockModel.names)
+					{
+						if (operations[name.Key] == 1)
+						{
+							newStats[name.Value] += block.stats[name.Value];
+						}
+						if (operations[name.Key] == 2)
+						{
+							newStats[name.Value] += block.stats[name.Value];
+							numberOfBlocks++;
+						}
+					}
+				}
+				else
+				{
+					reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.stats));
+					id++;
+				}
+			}
+			foreach (KeyValuePair<int, string> name in blockModel.names)
+			{
+				if (operations[name.Key] == 2)
+				{
+					newStats[name.Value] = newStats[name.Value] / numberOfBlocks;
+				}
+			}
+
+			reBlockModel.Add(new VirtualBlock(0, Rx, Ry, Rz, newStats, oldBlocks));
+
+			return reBlockModel;
+		}
+
+		public void showCommandMenu()
         {
             while (true)
             {
@@ -179,11 +247,5 @@ namespace CraftMine
                 }
             }
         }
-
-
-
-
-
-
     }
 }

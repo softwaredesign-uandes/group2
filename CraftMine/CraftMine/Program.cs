@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Grapevine.Server;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,10 +10,16 @@ namespace CraftMine
     {
         static void Main(string[] args)
         {
-            FileManager fileManager = new FileManager();
+			//FileManager fileManager = new FileManager();
+			//fileManager.MainMenu();
 
-            fileManager.MainMenu();
-        }
+			using (var server = new RestServer())
+			{
+				server.LogToConsole().Start();
+				Console.ReadLine();
+				server.Stop();
+			}
+		}
 
         
 
