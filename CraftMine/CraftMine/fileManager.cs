@@ -67,7 +67,36 @@ namespace CraftMine
             blockModel = new BlockModel(blocksFromFile, names);
         }
 
-        public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
+		public void CreateBlockModelFromSheet(string[] headers, Dictionary<string, string> values)
+		{
+			List<Block> blocksFromFile = new List<Block>();
+			Console.WriteLine("Loading file, this may take a moment.");
+			int id;
+			int x;
+			int y;
+			int z;
+			int columnNumber = headers.Length;
+			Dictionary<int, string> names = new Dictionary<int, string>();
+			foreach (string name in headers){
+
+			}
+			foreach (KeyValuePair<string, string> value in values)
+			{
+				Dictionary<string, double> stats = new Dictionary<string, double>();
+				id = Convert.ToInt32(value.Key);
+				x = Convert.ToInt32(value.Key);
+				y = Convert.ToInt32(value.Key);
+				z = Convert.ToInt32(value.Key);
+				for (int i = 4; i < columnNumber; i++)
+				{
+					stats[names[i]] = Convert.ToDouble(value.Key);
+				}
+				blocksFromFile.Add(new Block(id, x, y, z, stats));
+			}
+			blockModel = new BlockModel(blocksFromFile, names);
+		}
+
+		public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
         {
             List<Block> reBlockModel = new List<Block>();
             Dictionary<int, int> operations = new Dictionary<int, int>();

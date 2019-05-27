@@ -13,23 +13,40 @@ namespace CraftMine
 	[RestResource]
 	public class REST
 	{
-		[RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/")]
-		public IHttpContext HelloWorld(IHttpContext context)
+		string[] names;
+
+		[RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/load_headers")]
+		public IHttpContext LoadHeaders(IHttpContext context)
 		{
-			context.Response.ContentType = ContentType.JSON;
-			Dictionary<string, string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Payload);
-			context.Response.SendResponse("Hello World");
-			/*try
+			try
 			{
 				context.Response.ContentType = ContentType.JSON;
 				Dictionary<string, string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Payload);
-				context.Response.SendResponse(payload["test"]);
+				foreach (KeyValuePair<string, string> value in payload)
+				{
+					string header = value.Value;
+				}
+			}
+			catch (Exception e)
+			{
+				throw e;
+			}
+			return context;
+		}
+
+		[RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/load_file")]
+		public IHttpContext LoadFile(IHttpContext context)
+		{
+			try
+			{
+				context.Response.ContentType = ContentType.JSON;
+				Dictionary<string, string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Payload);
 
 			}
 			catch (Exception e)
 			{
 				throw e;
-			}*/
+			}
 			return context; 
 		}
 	}
