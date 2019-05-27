@@ -14,6 +14,7 @@ namespace CraftMine
 	public class REST
 	{
 		string[] names;
+		List<double[]> values = new List<double[]>();
 
 		[RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/load_headers")]
 		public IHttpContext LoadHeaders(IHttpContext context)
@@ -21,11 +22,10 @@ namespace CraftMine
 			try
 			{
 				context.Response.ContentType = ContentType.JSON;
-				Dictionary<string, string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Payload);
-				foreach (KeyValuePair<string, string> value in payload)
-				{
-					string header = value.Value;
-				}
+				dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+				names = payload.names;
+				context.Response.SendResponse("OK");
+
 			}
 			catch (Exception e)
 			{
@@ -40,8 +40,19 @@ namespace CraftMine
 			try
 			{
 				context.Response.ContentType = ContentType.JSON;
-				Dictionary<string, string> payload = JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Payload);
+				dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+				double[][] valueSegment = payload.data.ToObject<double[][]>();
+				foreach (double[] value in valueSegment)
+				{
+					values.Add(value);
+				}
 
+				context.Response.SendResponse("OK");
+				if (payload.last == "true")
+				{
+					FileManager fileManager = new FileManager();
+					fileManager.MainMenu();
+				}
 			}
 			catch (Exception e)
 			{
