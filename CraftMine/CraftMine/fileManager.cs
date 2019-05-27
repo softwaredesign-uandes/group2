@@ -7,10 +7,9 @@ namespace CraftMine
 {
     class FileManager
     {
-        List<BlockModel> olderBlockModels = new List<BlockModel>();
         BlockModel blockModel;
             
-        public void mainMenu()
+        public void MainMenu()
         {
             Console.WriteLine("Hello and Welcome to CraftMine, a Notch above for your Map Crafting");
             Console.WriteLine("Please type the name of the .block file to Read (for example: marvin)");
@@ -70,67 +69,68 @@ namespace CraftMine
 
         public List<Block> Reblock(List<Block> blocks, int Rx, int Ry, int Rz)
         {
-            olderBlockModels.Add(new BlockModel(blocks, blockModel.names));
             List<Block> reBlockModel = new List<Block>();
-            Dictionary<string, double> newGrades = new Dictionary<string, double>();
+            Dictionary<int, int> operations = new Dictionary<int, int>();
             Dictionary<string, double> newStats = new Dictionary<string, double>();
             int id = 1;
-            double newWeight = 0;
-            if (zuck)
-            {
-                double totalCost = 0;
-                double totalValue = 0;
-                double totalRock = 0;
-                double totalOre = 0;
-                foreach (Block block in blocks)
-                {
-                    if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
-                    {
-                        newWeight += block.weight;
-                        totalCost += block.stats["cost"];
-                        totalValue += block.stats["value"];
-                        totalRock += block.stats["rock_tonnes"];
-                        totalOre += block.stats["ore_tonnes"];
-                    }
-                    else
-                    {
-                        reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.weight, block.grades, block.stats));
-                        id++;
-                    }
-                }
-                newGrades["ore_grade"] = totalOre / newWeight;
-                newStats["cost"] = totalCost;
-                newStats["value"] = totalValue;
-                newStats["rock_tonnes"] = totalRock;
-                newStats["ore_tonnes"] = totalOre;
-            }
-            else
-            {
-                double totalAu = 0;
-                double totalCu = 0;
-                double totalProfit = 0;
-                foreach (Block block in blocks)
-                {
-                    if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
-                    {
-                        newWeight += block.weight;
-                        totalAu += block.stats["au [ppm]"];
-                        totalCu += block.stats["cu %"];
-                        totalProfit += block.stats["proc_profit"];
-                    }
-                    else
-                    {
-                        reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.weight, block.grades, block.stats));
-                        id++;
-                    }
-                }
-                newGrades["au [ppm]"] = totalAu;
-                newGrades["cu %"] = totalCu;
-                newStats["proc_profit"] = totalProfit;
-            }
-            
+			int intSelection = 0;
+			foreach (KeyValuePair<int, string> name in blockModel.names)
+			{
+				Console.WriteLine("Seleccione 1 si esta columna se suma o 2 si esta columna se promedia " + name.Value);
+				newStats[name.Value] = 0;
+				string selection = Console.ReadLine();
+				try
+				{
+					Int32.TryParse(selection, out intSelection);
+					if (intSelection == 1)
+					{
+						operations[name.Key] = 1;
+					}
+					else if (intSelection == 2)
+					{
+						operations[name.Key] = 2;
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.ToString());
+					Console.Read();
+				}
 
-            reBlockModel.Add(new Block(0, Rx, Ry, Rz, newWeight, newGrades, newStats));
+			}
+			int numberOfBlocks = 0;
+			foreach (Block block in blocks)
+            {
+                if (block.x <= Rx && block.y <= Ry && block.z <= Rz)
+                {
+                    foreach (KeyValuePair<int, string> name in blockModel.names)
+					{
+						if(operations[name.Key] == 1)
+						{
+							newStats[name.Value] += block.stats[name.Value];
+						}
+						if (operations[name.Key] == 2)
+						{
+							newStats[name.Value] += block.stats[name.Value];
+							numberOfBlocks++;
+						}
+					}
+                }
+                else
+                {
+                    reBlockModel.Add(new Block(id, block.x, block.y, block.z, block.stats));
+                    id++;
+                }
+            }
+			foreach (KeyValuePair<int, string> name in blockModel.names)
+			{
+				if (operations[name.Key] == 2)
+				{
+					newStats[name.Value] = newStats[name.Value] / numberOfBlocks;
+				}
+			}
+
+			reBlockModel.Add(new Block(0, Rx, Ry, Rz, newStats));
 
             return reBlockModel;
         }
@@ -148,11 +148,11 @@ namespace CraftMine
                     Int32.TryParse(selection, out intSelection);
                     if (intSelection == 1)
                     {
-                        blockModel.checkIdStat(zuck);
+                        blockModel.checkIdStat();
                     }
                     else if (intSelection == 2)
                     {
-                        blockModel.checkGeneralStatistics(zuck);
+                        blockModel.checkGeneralStatistics();
                     }
                     else if (intSelection == 3)
                     {
