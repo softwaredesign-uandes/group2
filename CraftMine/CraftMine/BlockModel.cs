@@ -13,11 +13,11 @@ namespace CraftMine
 		public Dictionary<int, string> names;
         public int id;
 
-        public BlockModel(int id, List<Block> blocks, Dictionary<int, string> names)
+        public BlockModel(List<Block> blocks, Dictionary<int, string> names)
         {
             this.blocks = blocks;
             this.names = names;
-            this.id = id;
+            this.id = MineralContainer.getNextBlockModelID();
             MineralContainer.addBlockModel(this);
         }
 

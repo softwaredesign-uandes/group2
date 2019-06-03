@@ -4,7 +4,17 @@ using System.Text;
 
 namespace CraftMine
 {
-    class MineralDeposit
+    public class MineralDeposit
     {
+        public int id;
+        public string name;
+        public List<BlockModel> blockModels = new List<BlockModel>();
+
+        public MineralDeposit(string name)
+        {
+            this.id = MineralContainer.getNextMineralDepositID();
+            this.name = name;
+            MineralContainer.addMineralDeposit(this);
+        }
     }
 }

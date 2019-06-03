@@ -97,7 +97,7 @@ namespace CraftMine
                     Block block = new Block(xMax, yMax, zMax, xCoordinates[i], yCoordinates[i], zCoordinates[i], stats);
                     blocks.Add(block);
                 }
-                BlockModel blockModel = new BlockModel(MineralContainer.getNextBlockModelID(), blocks, names);
+                BlockModel blockModel = new BlockModel(blocks, names);
                 context.Response.SendResponse("Ok");
             }
             catch (Exception e)
@@ -140,7 +140,72 @@ namespace CraftMine
                 {
                     json.block_model.Add(JObject.Parse("{ \"id\":" + blockModel.id + "}"));
                 }
-            string jsonParse = json.ToString();
+                string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/mineral_deposits")]
+        public IHttpContext CreateMineralDeposit(IHttpContext context)
+        {
+            try
+            {
+                context.Response.ContentType = ContentType.JSON;
+                dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+                string name = payload.mineral_deposit.name.ToObject<string>();
+                MineralDeposit mineralDeposit = new MineralDeposit(name);
+
+                context.Response.SendResponse("Ok");
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/mineral_deposits/[id]")]
+        public IHttpContext GetMineralDeposit(IHttpContext context)
+        {
+            try
+            {
+                int id = int.Parse(context.Request.PathParameters["id"]);
+                MineralDeposit mineralDeposit = MineralContainer.getMineralDepositByID(id);
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.mineral_deposit = new JArray();
+                string jsonName = mineralDeposit.name;
+                json.mineral_deposit.Add(JObject.Parse("{ \"id\" : " + mineralDeposit.id + ", \"name\" : \"" + jsonName + "\" }"));
+                string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/mineral_deposits")]
+        public IHttpContext GetMineralDeposits(IHttpContext context)
+        {
+            try
+            {
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.mineral_deposit = new JArray();
+                List<MineralDeposit> mineralDeposits = MineralContainer.getMineralDeposits();
+                foreach (MineralDeposit mineralDeposit in mineralDeposits)
+                {
+                    string jsonName = mineralDeposit.name;
+                    json.mineral_deposit.Add(JObject.Parse("{ \"id\":" + mineralDeposit.id + ", \"name\" : \"" + jsonName + "\" }"));
+                }
+                string jsonParse = json.ToString();
                 context.Response.SendResponse(jsonParse);
             }
             catch (Exception e)
