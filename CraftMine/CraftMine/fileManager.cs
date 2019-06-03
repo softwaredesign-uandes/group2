@@ -64,7 +64,7 @@ namespace CraftMine
 				}
                 blocksFromFile.Add(new Block(id, x, y, z, stats));
             }
-            blockModel = new BlockModel(blocksFromFile, names);
+            blockModel = new BlockModel(MineralContainer.getNextBlockModelID(),blocksFromFile, names);
         }
 
 		public void CreateBlockModelFromSheet(string[] headers, List<double[]> values)
@@ -98,7 +98,7 @@ namespace CraftMine
 				}
 				blocksFromFile.Add(new Block(id, x, y, z, stats));
 			}
-			blockModel = new BlockModel(blocksFromFile, names);
+			blockModel = new BlockModel(MineralContainer.getNextBlockModelID(), blocksFromFile, names);
 			showCommandMenu();
 		}
 

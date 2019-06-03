@@ -7,19 +7,21 @@ using System.Threading.Tasks;
 
 namespace CraftMine
 {
-	class BlockModel
+	public class BlockModel
 	{
 		public List<Block> blocks;
 		public Dictionary<int, string> names;
+        public int id;
 
+        public BlockModel(int id, List<Block> blocks, Dictionary<int, string> names)
+        {
+            this.blocks = blocks;
+            this.names = names;
+            this.id = id;
+            MineralContainer.addBlockModel(this);
+        }
 
-		public BlockModel(List<Block> blocks, Dictionary<int, string> names)
-		{
-			this.blocks = blocks;
-			this.names = names;
-		}
-
-		public void setBlocksList(List<Block> blocks)
+        public void setBlocksList(List<Block> blocks)
 		{
 			this.blocks = blocks;
 		}

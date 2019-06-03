@@ -62,7 +62,7 @@ namespace CraftMine
 			return context; 
 		}
 
-        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/block_model")]
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/block_models")]
         public IHttpContext CreateBlockModel(IHttpContext context)
         {
             try
@@ -96,7 +96,7 @@ namespace CraftMine
                     Block block = new Block(xMax, yMax, zMax, xCoordinates[i], yCoordinates[i], zCoordinates[i], stats);
                     blocks.Add(block);
                 }
-                BlockModel blockModel = new BlockModel(blocks, names);
+                BlockModel blockModel = new BlockModel(MineralContainer.getNextBlockModelID(), blocks, names);
                 context.Response.SendResponse("Ok");
             }
             catch (Exception e)

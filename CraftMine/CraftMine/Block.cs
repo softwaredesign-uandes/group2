@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CraftMine
 {
-    class Block
+    public class Block
     {
         public int id;
         public int x;
