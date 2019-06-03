@@ -223,7 +223,7 @@ namespace CraftMine
             {
                 int id = int.Parse(context.Request.PathParameters["id"]);
                 int modelID = int.Parse(context.Request.PathParameters["modelID"]);
-                BlockModel blockModel = MineralContainer.getBlockModelByID(id);
+                BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
                 Block chosenBlock = blockModel.blocks[id];
                 context.Response.ContentType = ContentType.JSON;
                 dynamic json = new JObject();
@@ -242,19 +242,22 @@ namespace CraftMine
             return context;
         }
 
-        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/mineral_deposits")]
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models/[modelID]/blocks")]
         public IHttpContext GetBlocks(IHttpContext context)
         {
             try
             {
+                int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+                BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
                 context.Response.ContentType = ContentType.JSON;
                 dynamic json = new JObject();
-                json.mineral_deposit = new JArray();
-                List<MineralDeposit> mineralDeposits = MineralContainer.getMineralDeposits();
-                foreach (MineralDeposit mineralDeposit in mineralDeposits)
+                json.block = new JArray();
+                foreach (Block block in blockModel.blocks)
                 {
-                    string jsonName = mineralDeposit.name;
-                    json.mineral_deposit.Add(JObject.Parse("{ \"id\":" + mineralDeposit.id + ", \"name\" : \"" + jsonName + "\" }"));
+                    string x = block.x.ToString();
+                    string y = block.y.ToString();
+                    string z = block.z.ToString();
+                    json.block.Add(JObject.Parse("{ \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
                 }
                 string jsonParse = json.ToString();
                 context.Response.SendResponse(jsonParse);
