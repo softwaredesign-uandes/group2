@@ -116,9 +116,10 @@ namespace CraftMine
                 BlockModel blockmodel = MineralContainer.getBlockModelByID(id);
                 context.Response.ContentType = ContentType.JSON;
                 dynamic json = new JObject();
-                json.block_model = new JObject();
-                
-                context.Response.SendResponse("Ok");
+                json.block_model = new JArray();
+                json.block_model.Add(JObject.Parse("{ \"id\" : " + blockmodel.id + " }"));
+                string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
             }
             catch (Exception e)
             {
@@ -193,6 +194,56 @@ namespace CraftMine
 
         [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/mineral_deposits")]
         public IHttpContext GetMineralDeposits(IHttpContext context)
+        {
+            try
+            {
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.mineral_deposit = new JArray();
+                List<MineralDeposit> mineralDeposits = MineralContainer.getMineralDeposits();
+                foreach (MineralDeposit mineralDeposit in mineralDeposits)
+                {
+                    string jsonName = mineralDeposit.name;
+                    json.mineral_deposit.Add(JObject.Parse("{ \"id\":" + mineralDeposit.id + ", \"name\" : \"" + jsonName + "\" }"));
+                }
+                string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models/[modelID]/blocks/[id]")]
+        public IHttpContext GetBlock(IHttpContext context)
+        {
+            try
+            {
+                int id = int.Parse(context.Request.PathParameters["id"]);
+                int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+                BlockModel blockModel = MineralContainer.getBlockModelByID(id);
+                Block chosenBlock = blockModel.blocks[id];
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.block = new JArray();
+                string x = chosenBlock.x.ToString();
+                string y = chosenBlock.y.ToString();
+                string z = chosenBlock.z.ToString();
+                json.block.Add(JObject.Parse("{ \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
+                string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/mineral_deposits")]
+        public IHttpContext GetBlocks(IHttpContext context)
         {
             try
             {
