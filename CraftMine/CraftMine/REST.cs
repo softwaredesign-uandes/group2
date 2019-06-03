@@ -5,6 +5,7 @@ using Grapevine.Shared;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 
@@ -60,5 +61,49 @@ namespace CraftMine
 			}
 			return context; 
 		}
-	}
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/block_model")]
+        public IHttpContext CreateBlockModel(IHttpContext context)
+        {
+            try
+            {
+                context.Response.ContentType = ContentType.JSON;
+                dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+                int[] xCoordinates = payload.block_model.x_indices.ToObject<int[]>();
+                int[] yCoordinates = payload.block_model.y_indices.ToObject<int[]>();
+                int[] zCoordinates = payload.block_model.z_indices.ToObject<int[]>();
+                int[] weights = payload.block_model.weights.ToObject<int[]>();
+                Dictionary<string, double[]> grades = payload.block_model.grades.ToObject<Dictionary<string, double[]>>();
+                int xMax = xCoordinates.Max();
+                int yMax = yCoordinates.Max();
+                int zMax = zCoordinates.Max();
+                int blockAmount = xCoordinates.Length;
+                List<Block> blocks = new List<Block>();
+                Dictionary<int, string> names = new Dictionary<int, string>();
+                int nameId = 0;
+                foreach (string key in grades.Keys)
+                {
+                    names[nameId] = key;
+                    nameId++;
+                }
+                for (int i = 0; i < blockAmount; i++)
+                {
+                    Dictionary<string, double> stats = new Dictionary<string, double>();
+                    foreach(string key in grades.Keys)
+                    {
+                        stats[key] = grades[key][i];
+                    }
+                    Block block = new Block(xMax, yMax, zMax, xCoordinates[i], yCoordinates[i], zCoordinates[i], stats);
+                    blocks.Add(block);
+                }
+                BlockModel blockModel = new BlockModel(blocks, names);
+                context.Response.SendResponse("Ok");
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+    }
 }
