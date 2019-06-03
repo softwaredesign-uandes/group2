@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
 
@@ -98,6 +99,49 @@ namespace CraftMine
                 }
                 BlockModel blockModel = new BlockModel(MineralContainer.getNextBlockModelID(), blocks, names);
                 context.Response.SendResponse("Ok");
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models/[id]")]
+        public IHttpContext GetBlockModel(IHttpContext context)
+        {
+            try
+            {
+                int id = int.Parse(context.Request.PathParameters["id"]);
+                BlockModel blockmodel = MineralContainer.getBlockModelByID(id);
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.block_model = new JObject();
+                
+                context.Response.SendResponse("Ok");
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models")]
+        public IHttpContext GetBlockModels(IHttpContext context)
+        {
+            try
+            {
+                context.Response.ContentType = ContentType.JSON;
+                dynamic json = new JObject();
+                json.block_model = new JArray();
+                List<BlockModel> blockModels = MineralContainer.getBlockModels();
+                foreach(BlockModel blockModel in blockModels)
+                {
+                    json.block_model.Add(JObject.Parse("{ \"id\":" + blockModel.id + "}"));
+                }
+            string jsonParse = json.ToString();
+                context.Response.SendResponse(jsonParse);
             }
             catch (Exception e)
             {

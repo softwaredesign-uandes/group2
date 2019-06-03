@@ -16,7 +16,7 @@ namespace CraftMine
             BlockModels.Add(blockModel);
         }
 
-        public static List<BlockModel> getBlocMmodels()
+        public static List<BlockModel> getBlockModels()
         {
             return BlockModels;
         }
