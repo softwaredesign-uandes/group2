@@ -89,11 +89,11 @@
 			            contentType: "application/json; charset=utf-8",
 			            success: function (msg) {
 			            	blocks = [];
-			            	msg.forEach(function(element) {
+			            	msg.blocks.forEach(function(element) {
 							  blocks.push({
-							  	"x_index": msg.x_index,
-							  	"y_index": msg.y_index,
-							  	"z_index": msg.z_index,
+							  	"x_index": element.x_index,
+							  	"y_index": element.y_index,
+							  	"z_index": element.z_index,
 							  	"grades": {
 							  		"au" : 0.0,
 							  		"cu" : 0.0,

@@ -246,28 +246,41 @@ namespace CraftMine
         [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models/[modelID]/blocks")]
         public IHttpContext GetBlocks(IHttpContext context)
         {
-            try
+            //try
+            //{
+            int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+            BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
+            context.Response.ContentType = ContentType.JSON;
+            dynamic json_block = new JObject();
+            List<JObject> blocks = new List<JObject>();
+            foreach (Block block in blockModel.blocks)
             {
-                int modelID = int.Parse(context.Request.PathParameters["modelID"]);
-                BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
-                context.Response.ContentType = ContentType.JSON;
-                dynamic json = new JObject();
-                json.block = new JArray();
-                foreach (Block block in blockModel.blocks)
+                string id = block.id.ToString();
+                string x = block.x.ToString();
+                string y = block.y.ToString();
+                string z = block.z.ToString();
+                Dictionary<string, double> stats = block.stats;
+                json_block.stats = new JArray();
+                json_block.id = id;
+                json_block.x_index = x;
+                json_block.y_index = y;
+                json_block.z_index = z;
+                foreach (string key in stats.Keys)
                 {
-                    string id = block.id.ToString();
-                    string x = block.x.ToString();
-                    string y = block.y.ToString();
-                    string z = block.z.ToString();
-                    json.block.Add(JObject.Parse("{ \"id\" : \"" + id + "\", \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
+                    JObject stat = JObject.Parse("{\": " + key + "\": " + stats[key].ToString() + " }");
+                    json_block.stats.Add(stat);
                 }
-                string jsonParse = json.ToString();
-                context.Response.SendResponse(jsonParse);
+                blocks.Add(json_block);
             }
-            catch (Exception e)
-            {
-                context.Response.SendResponse(e.ToString());
-            }
+            dynamic jresponse = new JObject();
+            jresponse.blocks = new JArray(blocks);
+            string jsonParse = jresponse.ToString();
+            context.Response.SendResponse(jsonParse);
+            //}
+            //catch (Exception e)
+            //{
+            //    context.Response.SendResponse(e.ToString());
+            //}
             return context;
         }
 
