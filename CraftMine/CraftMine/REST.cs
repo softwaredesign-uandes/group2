@@ -251,10 +251,10 @@ namespace CraftMine
             int modelID = int.Parse(context.Request.PathParameters["modelID"]);
             BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
             context.Response.ContentType = ContentType.JSON;
-            dynamic json_block = new JObject();
             List<JObject> blocks = new List<JObject>();
             foreach (Block block in blockModel.blocks)
             {
+                dynamic json_block = new JObject();
                 string id = block.id.ToString();
                 string x = block.x.ToString();
                 string y = block.y.ToString();
