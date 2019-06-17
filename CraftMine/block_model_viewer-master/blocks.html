@@ -19,8 +19,8 @@
 
 		<script src="files/three.js"></script>
 		<script src="files/orbitControls.js"></script>
-
 		<script src="files/WebGL.js"></script>
+		<script src="files/jquery-3.4.1.js"></script>
 
 		<script>
 
@@ -77,31 +77,32 @@
 
 			function createObjects() {
 				function generateBlocks() {
-					blocks = [];
-					var xSize = 20;
-					var ySize = 20;
-					var zSize = 10;
-					for(var i=0; i<xSize; i++) {
-						for(var j=0; j<ySize; j++) {
-							for(var k=0; k<zSize; k++) {
-								var cuGrade = 0.0;
-								var auGrade = 0.0;
-								if(isBlockInCore(i, j, k, xSize, ySize, zSize)) {
-									cuGrade += Math.random() / 2.0;
-									auGrade += Math.random() / 2.0;
-								}
-								blocks.push({
-									"x_index": i,
-									"y_index": j,
-									"z_index": k,
-									"grades": {
-										"au" : auGrade,
-										"cu" : cuGrade,
-									}
-								});
-							}
-						}
-					}
+					var url = window.location.toString();
+					url = url.split('/');
+					var id = url[url.length - 1];
+					var ajax_url = "/block_models/" + id + "/blocks"
+					$.ajax({
+						type: "GET",
+						dataType: 'json',
+						url: ajax_url,
+						async: false,
+			            contentType: "application/json; charset=utf-8",
+			            success: function (msg) {
+			            	blocks = [];
+			            	msg.forEach(function(element) {
+							  blocks.push({
+							  	"x_index": msg.x_index,
+							  	"y_index": msg.y_index,
+							  	"z_index": msg.z_index,
+							  	"grades": {
+							  		"au" : 0.0,
+							  		"cu" : 0.0,
+							  	}
+							  })
+							});
+			                console.log(msg);                
+			            }
+					});
 				}
 
 				function isBlockInCore(i, j, k, xSize, ySize, zSize){
