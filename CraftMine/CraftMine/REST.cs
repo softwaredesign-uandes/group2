@@ -9,6 +9,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
+using System.IO;
 
 namespace CraftMine
 {
@@ -296,6 +297,23 @@ namespace CraftMine
             {
                 context.Response.SendResponse(e.ToString());
             }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/view/files/[filename]")]
+        public IHttpContext GetJavascript(IHttpContext context)
+        {
+            string filename = context.Request.PathParameters["filename"];
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../../block_model_viewer-master/files/" + filename, FileMode.Open));
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/view/[id]")]
+        public IHttpContext Visualizer(IHttpContext context)
+        {
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../../block_model_viewer-master/blocks.html", FileMode.Open));
             return context;
         }
     }
