@@ -254,13 +254,43 @@ namespace CraftMine
                 json.block = new JArray();
                 foreach (Block block in blockModel.blocks)
                 {
+                    string id = block.id.ToString();
                     string x = block.x.ToString();
                     string y = block.y.ToString();
                     string z = block.z.ToString();
-                    json.block.Add(JObject.Parse("{ \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
+                    json.block.Add(JObject.Parse("{ \"id\" : \"" + id + "\", \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
                 }
                 string jsonParse = json.ToString();
                 context.Response.SendResponse(jsonParse);
+            }
+            catch (Exception e)
+            {
+                context.Response.SendResponse(e.ToString());
+            }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/block_models/[modelID]/blocks/[id]")]
+        public IHttpContext UpdateBlock(IHttpContext context)
+        {
+            try
+            {
+                int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+                int id = int.Parse(context.Request.PathParameters["id"]);
+                BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
+                context.Response.ContentType = ContentType.JSON;
+                dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+                int xCoordinates = payload.block.x_indices.ToObject<int>();
+                int yCoordinates = payload.block.y_indices.ToObject<int>();
+                int zCoordinates = payload.block.z_indices.ToObject<int>();
+                Dictionary<string, double> grades = payload.block.grades.ToObject<Dictionary<string, double>>();
+
+                Block block = new Block(id, xCoordinates, yCoordinates, zCoordinates, grades);
+                Block blockOld = blockModel.blocks.First(B => B.getID() == id);
+                int index = blockModel.blocks.IndexOf(blockOld);
+                blockModel.blocks[index] = block;
+
+                context.Response.SendResponse("Ok");
             }
             catch (Exception e)
             {

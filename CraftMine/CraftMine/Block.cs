@@ -29,5 +29,10 @@ namespace CraftMine
         {
             return (z * xMax * yMax) + (y * xMax) + x;
         }
+
+        public int getID()
+        {
+            return id;
+        }
     }
 }
