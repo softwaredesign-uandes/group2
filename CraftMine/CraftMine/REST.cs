@@ -9,6 +9,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
+using System.IO;
 
 namespace CraftMine
 {
@@ -245,27 +246,87 @@ namespace CraftMine
         [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/block_models/[modelID]/blocks")]
         public IHttpContext GetBlocks(IHttpContext context)
         {
+            //try
+            //{
+            int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+            BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
+            context.Response.ContentType = ContentType.JSON;
+            List<JObject> blocks = new List<JObject>();
+            foreach (Block block in blockModel.blocks)
+            {
+                dynamic json_block = new JObject();
+                string id = block.id.ToString();
+                string x = block.x.ToString();
+                string y = block.y.ToString();
+                string z = block.z.ToString();
+                Dictionary<string, double> stats = block.stats;
+                json_block.stats = new JArray();
+                json_block.id = id;
+                json_block.x_index = x;
+                json_block.y_index = y;
+                json_block.z_index = z;
+                foreach (string key in stats.Keys)
+                {
+                    JObject stat = JObject.Parse("{\": " + key + "\": " + stats[key].ToString() + " }");
+                    json_block.stats.Add(stat);
+                }
+                blocks.Add(json_block);
+            }
+            dynamic jresponse = new JObject();
+            jresponse.blocks = new JArray(blocks);
+            string jsonParse = jresponse.ToString();
+            context.Response.SendResponse(jsonParse);
+            //}
+            //catch (Exception e)
+            //{
+            //    context.Response.SendResponse(e.ToString());
+            //}
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.POST, PathInfo = "/block_models/[modelID]/blocks/[id]")]
+        public IHttpContext UpdateBlock(IHttpContext context)
+        {
             try
             {
                 int modelID = int.Parse(context.Request.PathParameters["modelID"]);
+                int id = int.Parse(context.Request.PathParameters["id"]);
                 BlockModel blockModel = MineralContainer.getBlockModelByID(modelID);
                 context.Response.ContentType = ContentType.JSON;
-                dynamic json = new JObject();
-                json.block = new JArray();
-                foreach (Block block in blockModel.blocks)
-                {
-                    string x = block.x.ToString();
-                    string y = block.y.ToString();
-                    string z = block.z.ToString();
-                    json.block.Add(JObject.Parse("{ \"x_index\" : \"" + x + "\", \"y_index\" : \"" + y + "\", \"z_index\" : \"" + z + "\" }"));
-                }
-                string jsonParse = json.ToString();
-                context.Response.SendResponse(jsonParse);
+                dynamic payload = JsonConvert.DeserializeObject(context.Request.Payload);
+                int xCoordinates = payload.block.x_indices.ToObject<int>();
+                int yCoordinates = payload.block.y_indices.ToObject<int>();
+                int zCoordinates = payload.block.z_indices.ToObject<int>();
+                Dictionary<string, double> grades = payload.block.grades.ToObject<Dictionary<string, double>>();
+
+                Block block = new Block(id, xCoordinates, yCoordinates, zCoordinates, grades);
+                Block blockOld = blockModel.blocks.First(B => B.getID() == id);
+                int index = blockModel.blocks.IndexOf(blockOld);
+                blockModel.blocks[index] = block;
+
+                context.Response.SendResponse("Ok");
             }
             catch (Exception e)
             {
                 context.Response.SendResponse(e.ToString());
             }
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/view/files/[filename]")]
+        public IHttpContext GetJavascript(IHttpContext context)
+        {
+            string filename = context.Request.PathParameters["filename"];
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../../block_model_viewer-master/files/" + filename, FileMode.Open));
+            return context;
+        }
+
+        [RestRoute(HttpMethod = Grapevine.Shared.HttpMethod.GET, PathInfo = "/view/[id]")]
+        public IHttpContext Visualizer(IHttpContext context)
+        {
+            context.Response.ContentType = ContentType.HTML;
+            context.Response.SendResponse(new FileStream("../../../../block_model_viewer-master/blocks.html", FileMode.Open));
             return context;
         }
     }
